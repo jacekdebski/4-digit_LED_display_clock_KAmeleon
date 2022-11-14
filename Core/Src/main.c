@@ -78,12 +78,30 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+  HAL_PWREx_EnableVddIO2();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
+  GPIO_InitTypeDef conf = {
+  			.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_9,
+  			.Mode = GPIO_MODE_OUTPUT_PP,
+  			.Pull = GPIO_NOPULL,
+  			.Speed = GPIO_SPEED_FREQ_LOW
+  };
+  HAL_GPIO_Init(GPIOG, &conf);
 
+  conf.Pin = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5;
+  HAL_GPIO_Init(GPIOB, &conf);
+
+  conf.Pin = GPIO_PIN_15;
+  conf.Mode = GPIO_MODE_INPUT;
+  conf.Pull = GPIO_NOPULL;
+  conf.Speed = GPIO_SPEED_FREQ_MEDIUM;
+  HAL_GPIO_Init(GPIOE, &conf);
   /* USER CODE END 2 */
 
   /* Infinite loop */
