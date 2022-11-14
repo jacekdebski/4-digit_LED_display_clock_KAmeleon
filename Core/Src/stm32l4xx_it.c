@@ -31,7 +31,27 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define SEG_A  GPIO_PIN_0
+#define SEG_B  GPIO_PIN_1
+#define SEG_C  GPIO_PIN_2
+#define SEG_D  GPIO_PIN_3
+#define SEG_E  GPIO_PIN_4
+#define SEG_F  GPIO_PIN_5
+#define SEG_G GPIO_PIN_6
+#define SEG_DP GPIO_PIN_9
+#define ALL_SEGMENTS SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F | SEG_G | SEG_DP
 
+#define DIG_1 GPIO_PIN_2
+#define DIG_2 GPIO_PIN_3
+#define DIG_3 GPIO_PIN_4
+#define DIG_4 GPIO_PIN_5
+
+#define MAX_HOURS 24U
+#define MAX_MINUTES 60U
+#define MAX_SECONDS 60U
+#define MAX_MILISECONDS 1000U
+
+#define MAX_NUMBER_OF_DIGIT 4U
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -41,7 +61,18 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+const uint8_t segments[] = {
+  SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F,//0
+  SEG_B | SEG_C,// 1
+	SEG_A | SEG_E | SEG_B | SEG_D | SEG_G,// 2
+	SEG_A | SEG_B | SEG_G | SEG_C | SEG_D,// 3
+	SEG_F | SEG_G | SEG_B | SEG_C,// 4
+	SEG_A | SEG_F | SEG_G | SEG_C | SEG_D,// 5
+  SEG_A | SEG_F | SEG_G | SEG_E | SEG_C | SEG_D,// 6
+	SEG_A | SEG_B | SEG_C,// 7
+  SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F | SEG_G,// 8
+	SEG_A | SEG_B | SEG_C | SEG_D | SEG_F | SEG_G// 9
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -183,10 +214,109 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+static uint16_t miliseconds = 0U;
+static uint8_t seconds = 0U;
+static uint8_t minutes = 0U;
+static uint8_t hours = 0U;
+uint8_t digit = 0U;
+static uint8_t currentDigitposition = 1U;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
+  miliseconds++;
+
+  if (miliseconds >= MAX_MILISECONDS)
+  {
+	  miliseconds = 0U;
+	  seconds++;
+  }
+  if (seconds >= MAX_SECONDS)
+  {
+	  seconds = 0U;
+	  minutes++;
+  }
+  if (minutes >= MAX_MINUTES)
+  {
+	  minutes = 0U;
+	  hours++;
+  }
+  if (hours >= MAX_HOURS)
+  {
+	  miliseconds = 0U;
+	  seconds = 0U;
+	  minutes = 0U;
+	  hours = 0U;
+  }
+
+  //If button is pressed, show minutes:seconds.
+  if(HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15) == GPIO_PIN_RESET)
+  {
+    if (1U == currentDigitposition)	  {
+		  digit = (uint8_t)(minutes / 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_SET);
+	  }
+    if (2U == currentDigitposition)	  {
+		  digit = (uint8_t)(minutes % 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_SET);
+	  }
+    if (3U == currentDigitposition)	  {
+		  digit = (uint8_t)(seconds / 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_SET);
+	  }
+    if (4U == currentDigitposition)	  {
+		  digit = (uint8_t)(seconds % 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_SET);
+	  }
+  }
+  else
+  {
+	  if (1U == currentDigitposition)	  {
+		  digit = (uint8_t)(hours / 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_SET);
+	  }
+    if (2U == currentDigitposition)	  {
+		  digit = (uint8_t)(hours % 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_SET);
+	  }
+    if (3U == currentDigitposition)	  {
+		  digit = (uint8_t)(minutes / 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_SET);
+	  }
+    if (4U == currentDigitposition)	  {
+		  digit = (uint8_t)(minutes % 10);
+      HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_SET);
+	  }
+  }
+
+  currentDigitposition++;
+  if(currentDigitposition > MAX_NUMBER_OF_DIGIT)
+  {
+    currentDigitposition = 1U;
+  }
 
   /* USER CODE END SysTick_IRQn 1 */
 }
