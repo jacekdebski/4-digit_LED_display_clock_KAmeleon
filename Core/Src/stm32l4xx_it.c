@@ -52,6 +52,7 @@
 #define MAX_MILISECONDS 1000U
 
 #define MAX_NUMBER_OF_DIGIT 4U
+#define RIGHT_DOT_DELAY 200U
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -262,7 +263,7 @@ static uint8_t currentDigitposition = 1U;
 		  digit = (uint8_t)(minutes % 10);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit] | SEG_DP, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_SET);
 	  }
     if (3U == currentDigitposition)	  {
@@ -293,7 +294,7 @@ static uint8_t currentDigitposition = 1U;
 		  digit = (uint8_t)(hours % 10);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, segments[digit] | SEG_DP, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_SET);
 	  }
     if (3U == currentDigitposition)	  {
@@ -307,8 +308,15 @@ static uint8_t currentDigitposition = 1U;
 		  digit = (uint8_t)(minutes % 10);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
-		  HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_SET);
+      if(miliseconds < RIGHT_DOT_DELAY)
+      {
+        HAL_GPIO_WritePin(GPIOB, segments[digit] | SEG_DP, GPIO_PIN_SET);
+      }
+      else
+      {
+		    HAL_GPIO_WritePin(GPIOB, segments[digit], GPIO_PIN_SET);
+      }
+      HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_SET);
 	  }
   }
 
