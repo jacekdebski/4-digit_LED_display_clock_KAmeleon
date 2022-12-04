@@ -252,28 +252,32 @@ static uint8_t currentDigitposition = 1U;
   //If button is pressed, show minutes:seconds.
   if(HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15) == GPIO_PIN_RESET)
   {
-    if (1U == currentDigitposition)	  {
-		  digit = (uint8_t)(minutes / 10);
+    if (1U == currentDigitposition)	  
+    {
+		  digit = (uint8_t)((float)minutes / 10.0F);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOG, segments[digit], GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_SET);
 	  }
-    if (2U == currentDigitposition)	  {
+    if (2U == currentDigitposition)	 
+    {
 		  digit = (uint8_t)(minutes % 10);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOG, segments[digit] | SEG_DP, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_SET);
 	  }
-    if (3U == currentDigitposition)	  {
-		  digit = (uint8_t)(seconds / 10);
+    if (3U == currentDigitposition)	
+    {
+		  digit = (uint8_t)((float)seconds / 10.0F);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOG, segments[digit], GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_SET);
 	  }
-    if (4U == currentDigitposition)	  {
+    if (4U == currentDigitposition)
+	  {
 		  digit = (uint8_t)(seconds % 10);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_RESET);
@@ -283,28 +287,32 @@ static uint8_t currentDigitposition = 1U;
   }
   else
   {
-	  if (1U == currentDigitposition)	  {
-		  digit = (uint8_t)(hours / 10);
+	  if (1U == currentDigitposition)	 
+   {
+		  digit = (uint8_t)((float)hours / 10.0F);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOG, segments[digit], GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_1, GPIO_PIN_SET);
 	  }
-    if (2U == currentDigitposition)	  {
+    if (2U == currentDigitposition)
+	  {
 		  digit = (uint8_t)(hours % 10);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOG, segments[digit] | SEG_DP, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_2, GPIO_PIN_SET);
 	  }
-    if (3U == currentDigitposition)	  {
-		  digit = (uint8_t)(minutes / 10);
+    if (3U == currentDigitposition)	
+    {
+		  digit = (uint8_t)((float)minutes / 10.0F);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOG, segments[digit], GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(GPIOB, DIG_3, GPIO_PIN_SET);
 	  }
-    if (4U == currentDigitposition)	  {
+    if (4U == currentDigitposition)
+    {
 		  digit = (uint8_t)(minutes % 10);
       HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOB, DIG_4, GPIO_PIN_RESET);
