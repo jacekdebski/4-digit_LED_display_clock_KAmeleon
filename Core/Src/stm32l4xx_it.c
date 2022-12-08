@@ -82,6 +82,14 @@ uint8_t hours = 0U;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
+void clear_segment(const uint16_t DIG_number);
+void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number, const uint8_t position, bool isDot);
+void update_led_display(const uint32_t frequency)
+void update_time(const float frequency);
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
 void clear_segment(const uint16_t DIG_number)
 {
   HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
@@ -207,11 +215,6 @@ void update_time(const float frequency)
     counter = 0;  
   }
 }
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
