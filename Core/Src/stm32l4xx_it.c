@@ -114,6 +114,7 @@ void update_led_display(const uint32_t frequency)
   static uint32_t counter = 0U;
   static uint32_t max_counter = 0U;
   max_counter = (uint32_t)((float)1000/frequency);
+  counter++;
   if(counter >= max_counter)
   {
      //If button is pressed, show minutes:seconds.
@@ -136,7 +137,6 @@ void update_led_display(const uint32_t frequency)
     }
     counter = 0;
   }
-  counter++;
 }
 
 void update_time(const float frequency)
@@ -144,7 +144,7 @@ void update_time(const float frequency)
   static uint32_t counter = 0U;
   static uint32_t max_counter = 0U;
   max_counter = (uint32_t)(float)1000/frequency;
-
+  counter++;
   if (counter >= max_counter)
   {
     if (uwTick >= MAX_MILISECONDS)
@@ -171,7 +171,6 @@ void update_time(const float frequency)
     }
     counter = 0;  
   }
-  counter++;
 }
 /* USER CODE END PFP */
 
