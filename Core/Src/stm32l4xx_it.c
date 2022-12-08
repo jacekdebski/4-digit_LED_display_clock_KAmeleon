@@ -89,51 +89,88 @@ void clear_segment(const uint16_t DIG_number)
   HAL_GPIO_WritePin(GPIOB, DIG_number, GPIO_PIN_RESET);
 }
 
-void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number_left,const uint16_t DIG_number_right, bool isDot)
+void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number, const uint8_t position, bool isDot)
 {
-  const uint8_t digit_left = (uint8_t)((float)value / 10.0F);
-  const uint8_t digit_right = (uint8_t)(value % 10);
-
-  clear_segment(DIG_number_left);
-  HAL_GPIO_WritePin(GPIOG, segments[digit_left] | SEG_DP, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOB, DIG_number_left, GPIO_PIN_SET);
-
-  clear_segment(DIG_number_right);
-  if(isDot == true){
-    HAL_GPIO_WritePin(GPIOG, segments[digit_right] | SEG_DP, GPIO_PIN_SET);
+  uint8_t digit = 0U;
+  if (position % 2 != 0)
+  {
+    digit = (uint8_t)((float)value / 10.0F);
   }
   else
   {
-    HAL_GPIO_WritePin(GPIOG, segments[digit_right], GPIO_PIN_SET);
+    digit = (uint8_t)(value % 10);
+  }    
+
+  clear_segment(DIG_number);
+  if(isDot == true){
+    HAL_GPIO_WritePin(GPIOG, segments[digit] | SEG_DP, GPIO_PIN_SET);
   }
-    HAL_GPIO_WritePin(GPIOB, DIG_number_right, GPIO_PIN_SET);
+  else
+  {
+    HAL_GPIO_WritePin(GPIOG, segments[digit], GPIO_PIN_SET);
+  }
+  HAL_GPIO_WritePin(GPIOB, DIG_number, GPIO_PIN_SET);
 }
 
 void update_led_display(const uint32_t frequency)
 {
   static uint32_t counter = 0U;
   static uint32_t max_counter = 0U;
+  static uint32_t currentDigitposition = 1U;
   max_counter = (uint32_t)((float)1000/frequency);
   counter++;
   if(counter >= max_counter)
   {
      //If button is pressed, show minutes:seconds.
-    if(HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15) == GPIO_PIN_RESET)
+    if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15) == GPIO_PIN_RESET)
     {
-      send_digit_to_LED(minutes, DIG_1, DIG_2, false);
-      send_digit_to_LED(seconds, DIG_3, DIG_4, false);
+      if (currentDigitposition == 1) 
+      {
+        send_digit_to_LED(minutes, DIG_1, 1, false);
+      }
+      else if (currentDigitposition == 2) 
+      {
+        send_digit_to_LED(minutes, DIG_2, 2, true);
+      }
+      else if (currentDigitposition == 3)
+      {
+        send_digit_to_LED(seconds, DIG_3, 3, false);
+      }
+      else if (currentDigitposition == 4)
+      {
+        send_digit_to_LED(seconds, DIG_4, 4, false);
+      }      
     }
     else
     {
-      send_digit_to_LED(hours, DIG_1, DIG_2, false);
-      if(uwTick < RIGHT_DOT_DELAY)
+      if (currentDigitposition == 1) 
       {
-        send_digit_to_LED(minutes, DIG_3, DIG_4, true); 
+        send_digit_to_LED(hours, DIG_1, 1, false);
       }
-      else
+      else if (currentDigitposition == 2)
       {
-        send_digit_to_LED(minutes, DIG_3, DIG_4, false); 
+        send_digit_to_LED(hours, DIG_2, 2, true);
       }
+      else if (currentDigitposition == 3)
+      {
+        send_digit_to_LED(minutes, DIG_3, 3, false); 
+      }
+      else if (currentDigitposition == 4)
+      {
+        if (uwTick < RIGHT_DOT_DELAY)
+        {
+          send_digit_to_LED(minutes, DIG_4, 4, true); 
+        }
+        else
+        {
+          send_digit_to_LED(minutes, DIG_4, 4, false); 
+        }
+      }
+    }
+    currentDigitposition++;
+    if(currentDigitposition > MAX_NUMBER_OF_DIGIT)
+    {
+    currentDigitposition = 1U;
     }
     counter = 0;
   }
