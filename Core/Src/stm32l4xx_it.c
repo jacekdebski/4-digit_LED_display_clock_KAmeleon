@@ -75,7 +75,6 @@ const uint8_t segments[] = {
   SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F | SEG_G,// 8
 	SEG_A | SEG_B | SEG_C | SEG_D | SEG_F | SEG_G// 9
 };
-uint16_t miliseconds = 0U;
 uint8_t seconds = 0U;
 uint8_t minutes = 0U;
 uint8_t hours = 0U;
@@ -201,7 +200,6 @@ void update_time(const float frequency)
     }
     if (hours >= MAX_HOURS)
     {
-      miliseconds = 0U;
       seconds = 0U;
       minutes = 0U;
       hours = 0U;
