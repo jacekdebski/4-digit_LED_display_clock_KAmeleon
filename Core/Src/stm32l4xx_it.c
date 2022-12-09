@@ -84,7 +84,7 @@ uint8_t hours = 0U;
 /* USER CODE BEGIN PFP */
 void clear_segment(const uint16_t DIG_number);
 void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number, const uint8_t position, bool isDot);
-void update_led_display(const uint32_t frequency)
+void update_led_display(const float frequency)
 void update_time(const float frequency);
 /* USER CODE END PFP */
 
@@ -119,7 +119,7 @@ void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number, const ui
   HAL_GPIO_WritePin(GPIOB, DIG_number, GPIO_PIN_SET);
 }
 
-void update_led_display(const uint32_t frequency)
+void update_led_display(const float frequency)
 {
   static uint32_t counter = 0U;
   static uint32_t max_counter = 0U;
