@@ -78,22 +78,23 @@ const uint8_t segments[] = {
 uint8_t seconds = 0U;
 uint8_t minutes = 0U;
 uint8_t hours = 0U;
+uint32_t currentDigitposition = 1U;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-void clear_segment(const uint16_t DIG_number);
+void clear_lcd();
 void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number, const uint8_t position, bool isDot);
-void update_led_display(const float frequency)
+void update_led_display(const float frequency);
 void update_time(const float frequency);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void clear_segment(const uint16_t DIG_number)
+void clear_lcd()
 {
   HAL_GPIO_WritePin(GPIOG, ALL_SEGMENTS, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOB, DIG_number, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, DIG_1 | DIG_2 | DIG_3 | DIG_4, GPIO_PIN_RESET);
 }
 
 void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number, const uint8_t position, bool isDot)
@@ -107,8 +108,7 @@ void send_digit_to_LED(const uint16_t value, const uint16_t DIG_number, const ui
   {
     digit = (uint8_t)(value % 10);
   }    
-
-  clear_segment(DIG_number);
+  clear_lcd();
   if(isDot == true){
     HAL_GPIO_WritePin(GPIOG, segments[digit] | SEG_DP, GPIO_PIN_SET);
   }
@@ -123,7 +123,6 @@ void update_led_display(const float frequency)
 {
   static uint32_t counter = 0U;
   static uint32_t max_counter = 0U;
-  static uint32_t currentDigitposition = 1U;
   max_counter = (uint32_t)((float)1000/frequency);
   counter++;
   if(counter >= max_counter)
@@ -131,10 +130,10 @@ void update_led_display(const float frequency)
      //If button is pressed, show minutes:seconds.
     if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15) == GPIO_PIN_RESET)
     {
-      if (currentDigitposition == 1) 
-      {
+     if (currentDigitposition == 1)
+     {
         send_digit_to_LED(minutes, DIG_1, 1, false);
-      }
+     }
       else if (currentDigitposition == 2) 
       {
         send_digit_to_LED(minutes, DIG_2, 2, true);
@@ -146,7 +145,7 @@ void update_led_display(const float frequency)
       else if (currentDigitposition == 4)
       {
         send_digit_to_LED(seconds, DIG_4, 4, false);
-      }      
+      }
     }
     else
     {
